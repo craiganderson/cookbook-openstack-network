@@ -81,10 +81,11 @@ if node['openstack']['network']['neutron_ha_cmd_cron']
   splay = node['chef_client']['splay'].to_i || 3000
   sleep_time = checksum.to_s.hex % splay
 
-  cron 'neutron-ha-rebalance-l3' do
-    minute node['openstack']['network']['cron_l3_rebalance']
-    command "sleep #{sleep_time} ; . /root/openrc && #{node["openstack"]["network"]["neutron_ha_cmd"]} --l3-agent-rebalance > /dev/null 2>&1"
-  end
+## Commented for future purposes
+#  cron 'neutron-ha-rebalance-l3' do
+#    minute node['openstack']['network']['cron_l3_rebalance']
+#    command "sleep #{sleep_time} ; . /root/openrc && #{node["openstack"]["network"]["neutron_ha_cmd"]} --l3-agent-rebalance > /dev/null 2>&1"
+#  end
 
   cron 'neutron-ha-healthcheck' do
     minute node['openstack']['network']['cron_l3_healthcheck']
