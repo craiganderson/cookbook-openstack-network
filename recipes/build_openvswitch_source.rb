@@ -97,3 +97,11 @@ dpkg_package 'openvswitch-switch' do
   source "#{extract_path}/openvswitch-switch_#{ovs_options['openvswitch_dpkgversion']}_#{ovs_options['openvswitch_architecture']}.deb"
   action :nothing
 end
+
+cookbook_file "/etc/init.d/openvswitch-switch" do
+  source "openvswitch-switch"
+  owner "root"
+  group "root"
+  mode 0755
+  action :create
+end
