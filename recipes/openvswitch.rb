@@ -76,6 +76,15 @@ if platform?('ubuntu', 'debian')
 
 end
 
+cookbook_file "/etc/init/neutron-plugin-openvswitch-agent.conf" do
+  source "neutron-plugin-openvswitch-agent.conf"
+  owner "root"
+   group "root"
+   mode 0755
+   action :create
+   notifies :restart, "service[neutron-plugin-openvswitch-agent]", :delayed
+end
+
 service 'neutron-openvswitch-switch' do
   service_name platform_options['neutron_openvswitch_service']
   supports status: true, restart: true
