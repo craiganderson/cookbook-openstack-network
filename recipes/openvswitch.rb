@@ -161,13 +161,29 @@ end
 unless ['nicira', 'plumgrid', 'bigswitch'].include?(main_plugin)
   unless node['openstack']['network']['openvswitch']['bridge_mapping_interface'].to_s.empty?
     ext_bridge_mapping = node['openstack']['network']['openvswitch']['bridge_mapping_interface']
-    ext_bridge, ext_bridge_iface = ext_bridge_mapping.split(':')
-    execute 'create data network bridge' do
-      command "ovs-vsctl add-br #{ext_bridge} -- add-port #{ext_bridge} #{ext_bridge_iface}"
+    ext_bridge, ext_bridge_iface = ext_bridge_mapping.split(':') 
+    execute 'create external/data network bridge' do
+      command "ovs-vsctl add-br #{ext_bridge}"
       action :run
       not_if "ovs-vsctl br-exists #{ext_bridge}"
       only_if "ip link show #{ext_bridge_iface}"
       notifies :restart, 'service[neutron-plugin-openvswitch-agent]', :delayed
+    end
+    check_port = `ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
+    # If ovs-vsctl port-to-br command returned 0, then <ext_bridge_iface> exists
+    if $?.to_i == 0
+    # Raise exception and terminate chef execution if ext_bridge_iface is plugged into another bridge on OVS
+      if check_port != "#{ext_bridge}"
+         Chef::Application.fatal!("Didn't expect the #{ext_bridge_iface} in other bridge #{check_port}! Should be assigned to #{ext_bridge} by chef. Remove this port from invalid bridge (ovs-vsctl del-port #{check_port} #{ext_bridge_iface}) and try again!", 42)
+      end
+    # If port <ext_bridge_iface> doesn't exist and corresponding interface is present - add it to <ext_bridge>
+    else
+      execute 'add interface to external network bridge' do
+        command "ovs-vsctl add-port #{ext_bridge} #{ext_bridge_iface}"
+        action :run
+        only_if "ip link show #{ext_bridge_iface}"
+        notifies :restart, 'service[neutron-plugin-openvswitch-agent]', :delayed
+      end
     end
   end
 end
