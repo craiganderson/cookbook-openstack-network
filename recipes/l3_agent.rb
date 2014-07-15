@@ -60,6 +60,17 @@ unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
     not_if "ovs-vsctl br-exists #{ext_bridge}"
     only_if "ip link show #{ext_bridge_iface}"
   end
+  # If bridge doesn't exist command br-get-external-id returns non-zero.
+  # Set up bridge-id on external bridge if bridge exists and doesn't have it
+  ext_id = `ovs-vsctl br-get-external-id #{ext_bridge} bridge-id`
+  # If external bridge exists and it hasn't bridge-id - assign it
+  if $?.to_i == 0 && ext_id.empty?
+    execute 'set bridge-id on external network bridge' do
+      command "ovs-vsctl br-set-external-id #{ext_bridge} bridge-id #{ext_bridge}"
+      action :run
+      notifies :restart, 'service[neutron-server]', :immediately
+    end
+  end
   check_port = `ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
   # If ovs-vsctl port-to-br command returned 0, then <ext_bridge_iface> exists
   if $?.to_i == 0
