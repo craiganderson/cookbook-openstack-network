@@ -26,6 +26,8 @@ default['openstack']['network']['custom_template_banner'] = '
 # Do not edit, changes will be overwritten
 '
 
+default['openstack']['endpoints']['network-api-internal']['uri'] = node['openstack']['endpoints']['network-api']['uri']
+
 default['openstack']['network']['verbose'] = 'False'
 default['openstack']['network']['debug'] = 'False'
 default['openstack']['network']['auth_strategy'] = 'keystone'
