@@ -50,6 +50,9 @@ template '/etc/neutron/l3_agent.ini' do
   notifies :restart, 'service[neutron-l3-agent]', :immediately
 end
 
+log "main_plugin" do
+ message "#{main_plugin}"
+end
 unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
   # See http://docs.openstack.org/trunk/openstack-network/admin/content/install_neutron-l3.html
   ext_bridge = node['openstack']['network']['l3']['external_network_bridge']

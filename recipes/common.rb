@@ -291,15 +291,35 @@ when 'midonet'
 when 'ml2'
 
   template_file = '/etc/neutron/plugins/ml2/ml2_conf.ini'
+  if node['openstack']['network']['openvswitch']['local_ip_interface'].nil?
+    local_ip = node['openstack']['network']['openvswitch']['local_ip']
+  else
+    local_ip = address_for node['openstack']['network']['openvswitch']['local_ip_interface']
+  end
 
   template template_file do
     source 'plugins/ml2/ml2_conf.ini.erb'
     owner node['openstack']['network']['platform']['user']
     group node['openstack']['network']['platform']['group']
     mode 00644
+    variables(
+      local_ip: local_ip
+    )
 
     notifies :create, "link[#{plugin_file}]", :immediately
-    notifies :restart, 'service[neutron-server]', :delayed
+    if node.run_list.expand(node.chef_environment).roles.include?('openstack-base::openstack-controller-ccp')
+      notifies :restart, 'service[neutron-server]', :delayed
+    end
+    if node.run_list.expand(node.chef_environment).recipes.include?('openstack-network::openvswitch')
+      notifies :restart, 'service[neutron-plugin-openvswitch-agent]', :delayed
+    end
+  end
+
+  link "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini" do
+    to template_file
+    owner node['openstack']['network']['platform']['user']
+    group node['openstack']['network']['platform']['group']
+    action :create
   end
 
 when 'nec'

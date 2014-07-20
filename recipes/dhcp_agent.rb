@@ -46,7 +46,7 @@ package platform_options['neutron_plugin_package'].gsub('%plugin%', main_plugin)
   options platform_options['package_overrides']
   action :install
   # plugins are installed by the main openstack-neutron package on SUSE
-  not_if { platform_family? 'suse' }
+  not_if { platform_family? 'debian' }
 end
 
 template '/etc/neutron/dnsmasq.conf' do
