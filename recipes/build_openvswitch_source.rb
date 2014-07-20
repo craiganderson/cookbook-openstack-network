@@ -67,16 +67,10 @@ bash 'extract_package' do
         cd #{extract_path}/#{ovs_options['openvswitch_base_filename']}
         DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary
   EOH
-  not_if "dpkg -l | grep openvswitch-switch | grep #{ovs_options['openvswitch_dpkgversion']}"
   notifies :install, 'dpkg_package[openvswitch-common]', :immediately
   notifies :install, 'dpkg_package[openvswitch-datapath-dkms]', :immediately
   notifies :install, 'dpkg_package[openvswitch-pki]', :immediately
   notifies :install, 'dpkg_package[openvswitch-switch]', :immediately
-end
-
-dpkg_package 'openvswitch-common' do
-  source "#{extract_path}/openvswitch-common_#{ovs_options['openvswitch_dpkgversion']}_#{ovs_options['openvswitch_architecture']}.deb"
-  action :nothing
 end
 dpkg_package 'openvswitch-common' do
   source "#{extract_path}/openvswitch-common_#{ovs_options['openvswitch_dpkgversion']}_#{ovs_options['openvswitch_architecture']}.deb"
@@ -97,6 +91,24 @@ dpkg_package 'openvswitch-switch' do
   source "#{extract_path}/openvswitch-switch_#{ovs_options['openvswitch_dpkgversion']}_#{ovs_options['openvswitch_architecture']}.deb"
   action :nothing
 end
+
+#build_ovs = execute "extract_package" do
+#  cwd ::File.dirname(src_filepath)
+#  action :nothing
+#  command "rm -rf #{extract_path};  mkdir -p #{extract_path};  tar xzf #{src_filename} -C #{extract_path};  cd #{extract_path}/#{ovs_options['openvswitch_base_filename']};  DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary"
+#  not_if "dpkg -l | grep openvswitch-switch | grep #{ovs_options['openvswitch_dpkgversion']}"
+#end
+#
+#build_ovs.run_action(:run)
+#
+#if build_ovs.updated_by_last_action?
+#  notifies :install, 'dpkg_package[openvswitch-common]', :immediately
+#  notifies :install, 'dpkg_package[openvswitch-datapath-dkms]', :immediately
+#  notifies :install, 'dpkg_package[openvswitch-pki]', :immediately
+#  notifies :install, 'dpkg_package[openvswitch-switch]', :immediately
+#end
+
+
 
 cookbook_file "/etc/init.d/openvswitch-switch" do
   source "openvswitch-switch"

@@ -846,6 +846,9 @@ default['openstack']['network']['ryu']['polling_interval'] = 2
 # Example: type_drivers = flat,vlan,gre,vxlan
 default['openstack']['network']['ml2']['type_drivers'] = 'local,flat,vlan,gre,vxlan'
 
+# Firewall driver for realizing neutron security group function
+default['openstack']['network']['ml2']['fw_driver'] = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver'
+
 # (ListOpt) Ordered list of network_types to allocate as tenant
 # networks. The default value 'local' is useful for single-box testing
 # but provides no connectivity between hosts.

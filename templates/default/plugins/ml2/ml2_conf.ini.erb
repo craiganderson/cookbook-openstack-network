@@ -30,7 +30,7 @@ mechanism_drivers = <%= node['openstack']['network']['ml2']['mechanism_drivers']
 # flat_networks =
 # Example:flat_networks = physnet1,physnet2
 # Example:flat_networks = *
-flat_networks = <%= node['openstack']['network']['ml2']['flat_networks'] %>
+#flat_networks = <%= node['openstack']['network']['ml2']['flat_networks'] %>
 
 [ml2_type_vlan]
 # (ListOpt) List of <physical_network>[:<vlan_min>:<vlan_max>] tuples
@@ -40,7 +40,7 @@ flat_networks = <%= node['openstack']['network']['ml2']['flat_networks'] %>
 #
 # network_vlan_ranges =
 # Example: network_vlan_ranges = physnet1:1000:2999,physnet2
-network_vlan_ranges = <%= node['openstack']['network']['ml2']['network_vlan_ranges'] %>
+#network_vlan_ranges = <%= node['openstack']['network']['ml2']['network_vlan_ranges'] %>
 
 [ml2_type_gre]
 # (ListOpt) Comma-separated list of <tun_min>:<tun_max> tuples enumerating ranges of GRE tunnel IDs that are available for tenant network allocation
@@ -49,7 +49,7 @@ tunnel_id_ranges = <%= node['openstack']['network']['ml2']['tunnel_id_ranges'] %
 [ml2_type_vxlan]
 # (ListOpt) Comma-separated list of <vni_min>:<vni_max> tuples enumerating
 # ranges of VXLAN VNI IDs that are available for tenant network allocation.
-vni_ranges = <%= node['openstack']['network']['ml2']['vni_ranges'] %>
+#vni_ranges = <%= node['openstack']['network']['ml2']['vni_ranges'] %>
 
 # (StrOpt) Multicast group for the VXLAN interface. When configured, will
 # enable sending all broadcast traffic to this multicast group. When left
@@ -57,4 +57,27 @@ vni_ranges = <%= node['openstack']['network']['ml2']['vni_ranges'] %>
 #
 # vxlan_group =
 # Example: vxlan_group = 239.1.1.1
-vxlan_group = <%= node['openstack']['network']['ml2']['vxlan_group'] %>
+#vxlan_group = <%= node['openstack']['network']['ml2']['vxlan_group'] %>
+
+
+[OVS]
+enable_tunneling = <%= node["openstack"]["network"]["ml2"]["enable_tunneling"] %>
+<% if node["openstack"]["network"]["ml2"]["tunnel_id_ranges"] -%>
+tunnel_id_ranges = <%= node["openstack"]["network"]["ml2"]["tunnel_id_ranges"] %>
+<% end -%>
+<% if node["openstack"]["network"]["ml2"]["integration_bridge"] -%>
+integration_bridge = <%= node["openstack"]["network"]["ml2"]["integration_bridge"] %>
+<% end -%>
+<% if node["openstack"]["network"]["ml2"]["tunnel_bridge"] -%>
+tunnel_bridge = <%= node["openstack"]["network"]["ml2"]["tunnel_bridge"] %>
+<% end -%>
+local_ip = <%= @local_ip %>
+
+
+
+[SECURITYGROUP]
+# Firewall driver for realizing neutron security group function
+# Default: firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+<% if node["openstack"]["network"]["ml2"]["fw_driver"] -%>
+firewall_driver = <%= node["openstack"]["network"]["ml2"]["fw_driver"] =%>
+<% end -%>
