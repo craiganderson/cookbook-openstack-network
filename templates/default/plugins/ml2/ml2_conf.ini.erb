@@ -33,6 +33,7 @@ mechanism_drivers = <%= node['openstack']['network']['ml2']['mechanism_drivers']
 #flat_networks = <%= node['openstack']['network']['ml2']['flat_networks'] %>
 
 [ml2_type_vlan]
+network_vlan_ranges = netbond:500:1499,public:2012:2012,conexus:400:499,conexus_extranet:2101:2102,floating:2103:2103
 # (ListOpt) List of <physical_network>[:<vlan_min>:<vlan_max>] tuples
 # specifying physical_network names usable for VLAN provider and
 # tenant networks, as well as ranges of VLAN tags on each
@@ -72,6 +73,8 @@ integration_bridge = <%= node["openstack"]["network"]["ml2"]["integration_bridge
 tunnel_bridge = <%= node["openstack"]["network"]["ml2"]["tunnel_bridge"] %>
 <% end -%>
 local_ip = <%= @local_ip %>
+
+bridge_mappings = conexus:br-conexus,conexus_extranet:br-extranet,netbond:br-netbond,floating:br-floating
 
 
 
