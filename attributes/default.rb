@@ -846,6 +846,9 @@ default['openstack']['network']['ryu']['polling_interval'] = 2
 # Example: type_drivers = flat,vlan,gre,vxlan
 default['openstack']['network']['ml2']['type_drivers'] = 'local,flat,vlan,gre,vxlan'
 
+# bridge mappings
+default["openstack"]["network"]["ml2"]["bridge_mappings"] = 'conexus:br-conexus,conexus_extranet:br-extranet,netbond:br-netbond,floating:br-floating'
+
 # Firewall driver for realizing neutron security group function
 default['openstack']['network']['ml2']['fw_driver'] = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver'
 
@@ -897,6 +900,30 @@ default['openstack']['network']['ml2']['vni_ranges'] = ''
 # vxlan_group =
 # Example: vxlan_group = 239.1.1.1
 default['openstack']['network']['ml2']['vxlan_group'] = ''
+
+# ============================= F5 Plugin Configuration ===================
+default["openstack"]["network"]["f5"]["targzfile"]="f5-lbaas_16.tgz"
+default["openstack"]["network"]["f5"]["targz_checksum"]="43834d8c86521f95ff3b73115bdb3e4e"
+default["openstack"]["network"]["f5"]["debug"]="True"
+default["openstack"]["network"]["f5"]["periodic_interval"]=10
+default["openstack"]["network"]["f5"]["f5_static_agent_configuration_data"]=""
+default["openstack"]["network"]["f5"]["f5_device_type"]="external"
+default["openstack"]["network"]["f5"]["f5_ha_type"]="pair"
+default["openstack"]["network"]["f5"]["sync_mode"]="replication"
+default["openstack"]["network"]["f5"]["f5_external_physical_mappings"]="default:1.3:True, public:Internet:True"
+default["openstack"]["network"]["f5"]["f5_vtep_folder"]="Common"
+default["openstack"]["network"]["f5"]["f5_vtep_selfip_name"]="vtep"
+default["openstack"]["network"]["f5"]["l2_population"] = "True"
+default["openstack"]["network"]["f5"]["f5_global_routed_mode"]="False"
+default["openstack"]["network"]["f5"]["use_namespaces"]="True"
+default["openstack"]["network"]["f5"]["f5_route_domain_strictness"]="False"
+default["openstack"]["network"]["f5"]["f5_snat_mode"]="True"
+default["openstack"]["network"]["f5"]["f5_snat_addresses_per_subnet"]=1
+default["openstack"]["network"]["f5"]["f5_common_external_networks"]="True"
+default["openstack"]["network"]["f5"]["f5_bigip_lbaas_device_driver"]="neutron.services.loadbalancer.drivers.f5.bigip.icontrol_driver.iControlDriver"
+default["openstack"]["network"]["f5"]["icontrol_hostname"] = ""
+default["openstack"]["network"]["f5"]["icontrol_username"]="admin"
+default["openstack"]["network"]["f5"]["icontrol_connection_retry_interval"]=10
 
 # platform-specific settings
 case platform
