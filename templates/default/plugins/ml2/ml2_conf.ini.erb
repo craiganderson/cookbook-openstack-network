@@ -73,8 +73,9 @@ tunnel_bridge = <%= node["openstack"]["network"]["ml2"]["tunnel_bridge"] %>
 <% end -%>
 local_ip = <%= @local_ip %>
 
+<% if not @compute_node_boolean -%>
 bridge_mappings = <%= node["openstack"]["network"]["ml2"]["bridge_mappings"] %>
-
+<% end -%>
 
 
 

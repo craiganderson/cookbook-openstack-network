@@ -27,6 +27,7 @@ default['openstack']['network']['custom_template_banner'] = '
 '
 
 default['openstack']['endpoints']['network-api-internal']['uri'] = node['openstack']['endpoints']['network-api']['uri']
+default['openstack']['network']['compute_node_boolean'] = false
 
 default['openstack']['network']['verbose'] = 'False'
 default['openstack']['network']['debug'] = 'False'

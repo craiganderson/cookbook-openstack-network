@@ -297,17 +297,23 @@ when 'ml2'
     local_ip = address_for node['openstack']['network']['openvswitch']['local_ip_interface']
   end
 
+  compute_node_boolean = false
+  if node.run_list.expand(node.chef_environment).roles.include?('openstack-compute-worker')
+    compute_node_boolean = true
+  end
+
   template template_file do
     source 'plugins/ml2/ml2_conf.ini.erb'
     owner node['openstack']['network']['platform']['user']
     group node['openstack']['network']['platform']['group']
     mode 00644
     variables(
-      local_ip: local_ip
+      local_ip: local_ip,
+      compute_node_boolean: compute_node_boolean
     )
 
     notifies :create, "link[#{plugin_file}]", :immediately
-    if node.run_list.expand(node.chef_environment).roles.include?('openstack-base::openstack-controller-ccp')
+    if node.run_list.expand(node.chef_environment).roles.include?('openstack-base::openstack-controller-ccp') or node.run_list.expand(node.chef_environment).roles.include?('openstack-base::openstack-controller')
       notifies :restart, 'service[neutron-server]', :delayed
     end
     if node.run_list.expand(node.chef_environment).recipes.include?('openstack-network::openvswitch')
