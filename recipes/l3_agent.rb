@@ -140,8 +140,9 @@ if node['openstack']['network']['l3']['external_network_bridge'].nil? or node['o
     # If port <ext_bridge_iface> doesn't exist and corresponding interface is present - add it to <ext_bridge>
     else
       execute 'add interface to external network bridge' do
-        command "ovs-vsctl add-port #{bridge} #{patch_iface} -- add-port #{parent_bridge} #{ext_bridge_iface} -- set interface #{patch_iface} type=patch options:peer=#{ext_bridge_iface} -- set interface #{ext_bridge_iface} type=patch options:peer=#{patch_iface}"
+        command "ovs-vsctl add-port #{ext_bridge} #{patch_iface} -- add-port #{parent_bridge} #{ext_bridge_iface} -- set interface #{patch_iface} type=patch options:peer=#{ext_bridge_iface} -- set interface #{ext_bridge_iface} type=patch options:peer=#{patch_iface}"
         action :run
+        notifies :restart, 'service[neutron-plugin-openvswitch-agent]', :delayed
       end
     end
 
