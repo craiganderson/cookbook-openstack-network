@@ -255,10 +255,14 @@ if conexus_tenant_id:
           print '[OK] router:external flag = True for transit network'
         else:
           print '[ERROR] router:external flag is not True for transit network'
+        if net.get('router:private') == True:
+          print '[OK] router:private flag = True for transit network'
+        else:
+          print '[ERROR] router:private flag is not True for transit network'
         break
   else:
     transit_net_name = 'conexus_transit_' + str(available_conexus.vlan) + '_net'
-    transit_net = neutron.create_network(body={"network" : {"name": transit_net_name, "admin_state_up": "true", "router:external": "true", "tenant_id": conexus_tenant_id, "provider:network_type": "vlan", "provider:physical_network": "conexus", "provider:segmentation_id": available_conexus.vlan}})
+    transit_net = neutron.create_network(body={"network" : {"name": transit_net_name, "admin_state_up": "true", "router:external": "true", "router:private": "true", "tenant_id": conexus_tenant_id, "provider:network_type": "vlan", "provider:physical_network": "conexus", "provider:segmentation_id": available_conexus.vlan}})
     transit_net_id = transit_net['network']['id']
 
   if transit_subnet_id:
