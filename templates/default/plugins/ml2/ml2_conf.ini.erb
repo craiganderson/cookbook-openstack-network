@@ -40,7 +40,7 @@ mechanism_drivers = <%= node['openstack']['network']['ml2']['mechanism_drivers']
 #
 # network_vlan_ranges =
 # Example: network_vlan_ranges = physnet1:1000:2999,physnet2
-#network_vlan_ranges = <%= node['openstack']['network']['ml2']['network_vlan_ranges'] %>
+network_vlan_ranges = <%= node['openstack']['network']['ml2']['network_vlan_ranges'] %>
 
 [ml2_type_gre]
 # (ListOpt) Comma-separated list of <tun_min>:<tun_max> tuples enumerating ranges of GRE tunnel IDs that are available for tenant network allocation
@@ -72,6 +72,10 @@ integration_bridge = <%= node["openstack"]["network"]["ml2"]["integration_bridge
 tunnel_bridge = <%= node["openstack"]["network"]["ml2"]["tunnel_bridge"] %>
 <% end -%>
 local_ip = <%= @local_ip %>
+
+<% if not @compute_node_boolean -%>
+bridge_mappings = <%= node["openstack"]["network"]["ml2"]["bridge_mappings"] %>
+<% end -%>
 
 
 

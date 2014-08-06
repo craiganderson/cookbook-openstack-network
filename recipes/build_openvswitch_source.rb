@@ -67,6 +67,7 @@ bash 'extract_package' do
         cd #{extract_path}/#{ovs_options['openvswitch_base_filename']}
         DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary
   EOH
+  not_if "dpkg -l | grep openvswitch-switch | grep #{ovs_options['openvswitch_dpkgversion']}"
   notifies :install, 'dpkg_package[openvswitch-common]', :immediately
   notifies :install, 'dpkg_package[openvswitch-datapath-dkms]', :immediately
   notifies :install, 'dpkg_package[openvswitch-pki]', :immediately

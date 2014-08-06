@@ -7,6 +7,9 @@
     "shared": "field:networks:shared=True",
     "shared_firewalls": "field:firewalls:shared=True",
     "external": "field:networks:router:external=True",
+    "notprivate": "field:networks:router:private=False",
+    "private":"field:networks:router:private=True",
+    "external_and_public":"rule:external and rule:notprivate",
     "default": "rule:admin_or_owner",
 
     "subnets:private:read": "rule:admin_or_owner",
@@ -20,7 +23,7 @@
     "delete_subnet": "rule:admin_or_network_owner",
 
     "create_network": "",
-    "get_network": "rule:admin_or_owner or rule:shared or rule:external",
+    "get_network": "rule:admin_or_owner or rule:shared or rule:external_and_public",
     "get_network:router:external": "rule:regular_user",
     "get_network:segments": "rule:admin_only",
     "get_network:provider:network_type": "rule:admin_only",
@@ -29,6 +32,7 @@
     "get_network:queue_id": "rule:admin_only",
     "create_network:shared": "rule:admin_only",
     "create_network:router:external": "rule:admin_only",
+    "create_network:router:private": "rule:admin_only",
     "create_network:segments": "rule:admin_only",
     "create_network:provider:network_type": "rule:admin_only",
     "create_network:provider:physical_network": "rule:admin_only",
@@ -111,7 +115,7 @@
     "create_floatingip": "rule:regular_user",
     "update_floatingip": "rule:admin_or_owner",
     "delete_floatingip": "rule:admin_or_owner",
-    "get_floatingip": "rule:admin_or_owner",
+    "get_floatingip": "rule:admin_or_owner", 
 
     "create_network_profile": "rule:admin_only",
     "update_network_profile": "rule:admin_only",
