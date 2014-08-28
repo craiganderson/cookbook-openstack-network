@@ -110,9 +110,10 @@ end
 
 identity_endpoint = endpoint 'identity-api'
 identity_admin_endpoint = endpoint 'identity-admin'
-auth_uri = ::URI.decode identity_endpoint.to_s
+identity_internal_endpoint = endpoint 'identity-api-internal'
+auth_uri = ::URI.decode identity_internal_endpoint.to_s
 
-auth_uri = auth_uri_transform identity_endpoint.to_s, node['openstack']['network']['api']['auth']['version']
+auth_uri = auth_uri_transform identity_internal_endpoint.to_s, node['openstack']['network']['api']['auth']['version']
 
 db_user = node['openstack']['db']['network']['username']
 db_pass = get_password 'db', 'neutron'
@@ -153,7 +154,7 @@ template '/etc/neutron/neutron.conf' do
     mq_password: mq_password,
     core_plugin: core_plugin,
     auth_uri: auth_uri,
-    identity_admin_endpoint: identity_admin_endpoint,
+    identity_internal_endpoint: identity_internal_endpoint,
     service_pass: service_pass,
     sql_connection: sql_connection
   )
@@ -168,7 +169,7 @@ template '/etc/neutron/api-paste.ini' do
   mode   00640
   variables(
     auth_uri: auth_uri,
-    identity_admin_endpoint: identity_admin_endpoint,
+    identity_internal_endpoint: identity_internal_endpoint,
     service_pass: service_pass
   )
 
