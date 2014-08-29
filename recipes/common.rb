@@ -321,6 +321,12 @@ when 'ml2'
     end
   end
 
+  directory "/etc/neutron/plugins/openvswitch" do
+    owner node['openstack']['network']['platform']['user']
+    group node['openstack']['network']['platform']['group']
+    mode 00700
+  end
+
   link "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini" do
     to template_file
     owner node['openstack']['network']['platform']['user']
