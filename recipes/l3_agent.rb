@@ -72,7 +72,7 @@ unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
   end
   # If bridge doesn't exist command br-get-external-id returns non-zero.
   # Set up bridge-id on external bridge if bridge exists and doesn't have it
-  ext_id = `ovs-vsctl br-get-external-id #{ext_bridge} bridge-id`
+  ext_id = `/usr/bin/ovs-vsctl br-get-external-id #{ext_bridge} bridge-id`
   # If external bridge exists and it hasn't bridge-id - assign it
   if $?.to_i == 0 && ext_id.empty?
     execute 'set bridge-id on external network bridge' do
@@ -81,7 +81,7 @@ unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
       notifies :restart, 'service[neutron-server]', :immediately
     end
   end
-  check_port = `ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
+  check_port = `/usr/bin/ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
   # If ovs-vsctl port-to-br command returned 0, then <ext_bridge_iface> exists
   if $?.to_i == 0
     # Raise exception and terminate chef execution if ext_bridge_iface is plugged into another bridge on OVS
@@ -104,7 +104,7 @@ if node['openstack']['network']['l3']['external_network_bridge'].nil? or node['o
   # set id for br-int
   # If bridge doesn't exist command br-get-external-id returns non-zero.
   # Set up bridge-id on external bridge if bridge exists and doesn't have it
-  ext_id = `ovs-vsctl br-get-external-id br-int bridge-id`
+  ext_id = `/usr/bin/ovs-vsctl br-get-external-id br-int bridge-id`
   # If external bridge exists and it hasn't bridge-id - assign it
   if $?.to_i == 0 && ext_id.empty?
     execute 'set bridge-id on external network bridge' do
@@ -130,7 +130,7 @@ if node['openstack']['network']['l3']['external_network_bridge'].nil? or node['o
 
     # Add the peer patch to the parent bridge
     ext_bridge_iface = "patch-bond1-#{bridge[1].split('-')[1]}"
-    check_port = `ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
+    check_port = `/usr/bin/ovs-vsctl port-to-br #{ext_bridge_iface}`.delete("\n")
     # If ovs-vsctl port-to-br command returned 0, then <ext_bridge_iface> exists
     if $?.to_i == 0
       # Raise exception and terminate chef execution if ext_bridge_iface is plugged into another bridge on OVS
