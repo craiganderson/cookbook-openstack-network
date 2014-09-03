@@ -1,0 +1,17 @@
+# neutron-ovs-cleanup - Neutron OVS Port Cleanup
+#
+# Neutron OVS Port Cleanup Script
+
+description     "Neutron OVS Port Cleanup"
+author          "Alan Meadows <alan.meadows@gmail.com>"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+pre-start script
+  if [ -f "/etc/neutron/neutron.conf" ]; then
+    exec /usr/bin/neutron-ovs-cleanup
+  else
+    exit 1
+  fi
+end script

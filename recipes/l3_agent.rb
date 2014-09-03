@@ -123,3 +123,33 @@ unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
     end
   end
 end
+
+# (alanmeadows): Ubuntu PPA packages are missing neutron-ovs-cleanup
+# service scripts whereas RHEL et al set this service up
+# appropriately on package installation.
+#
+# For additional details, see:
+# https://bugs.launchpad.net/openstack-manuals/+bug/1156861
+if platform?("ubuntu")
+  cookbook_file "/etc/init/neutron-ovs-cleanup.conf" do
+    owner "root"
+    group "root"
+    mode "0755"
+    source "neutron-ovs-cleanup.conf.upstart"
+    action :create
+    not_if { File.exists?("/etc/init/neutron-ovs-cleanup.conf") }
+  end
+  link "/etc/init.d/neutron-ovs-cleanup" do
+    to "/lib/init/upstart-job"
+    not_if { File.exists?("/etc/init.d/neutron-ovs-cleanup") }
+  end
+
+  service "neutron-ovs-cleanup" do
+    service_name platform_options["neutron_ovs_cleanup_service"]
+    supports :restart => false, :start => true, :stop => false, :reload => false
+    priority({ 2 => [ :start, 19 ]})
+    action :enable
+    only_if { File.exists?("/etc/neutron/neutron.conf") }
+  end
+end
+
