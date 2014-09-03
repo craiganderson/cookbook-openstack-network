@@ -117,6 +117,7 @@ unless %w(nicira plumgrid bigswitch linuxbridge).include?(main_plugin)
       execute 'add interface to external network bridge' do
         command "ovs-vsctl add-port #{ext_bridge} #{ext_bridge_iface} -- add-port #{parent_bridge} #{patch_iface} -- set interface #{ext_bridge_iface} type=patch options:peer=#{patch_iface} -- set interface #{patch_iface} type=patch options:peer=#{ext_bridge_iface}"
         action :run
+        not_if "ovs-vsctl port-to-br #{ext_bridge_iface} | grep #{ext_bridge}"
         notifies :restart, 'service[neutron-plugin-openvswitch-agent]', :delayed
       end
     end
